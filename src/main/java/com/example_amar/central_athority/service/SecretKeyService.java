@@ -48,30 +48,49 @@ public class SecretKeyService {
 
     public boolean verifyHmac(String installerUUID,String appId,String deviceId,String installerHmacCode)
     {
+        System.out.println(installerHmacCode);
         try{
                 String sharedSecret=getSharedSecret(installerUUID);
-                byte[] receivedMac;
-                try{
-                     receivedMac=Base64.getDecoder().decode(installerHmacCode);
-                }catch(Exception e){
-                    return false;
-                }
+                 if(installerHmacCode==null||sharedSecret==null)
+                 {
+                     return false;
+                 }
+                 byte[] receivedMac=hexToBytes(installerHmacCode);
                 String SignedData=appId+":"+deviceId; /// signed data has : between dont forget............
                 byte[] keyBytes=sharedSecret.getBytes(StandardCharsets.UTF_8);
                 byte[] dataBytes=SignedData.getBytes(StandardCharsets.UTF_8);
 
                 // calculating hmac to comapare with client value
-            SecretKeySpec secretKeySpec=new SecretKeySpec(keyBytes,HMAC_algo);
-            Mac mac= Mac.getInstance(HMAC_algo);
-            mac.init(secretKeySpec);
-            byte[] serverCalcMac=mac.doFinal(dataBytes);
-            return MessageDigest.isEqual(receivedMac,serverCalcMac);
+               SecretKeySpec secretKeySpec=new SecretKeySpec(keyBytes,HMAC_algo);
+               Mac mac= Mac.getInstance(HMAC_algo);
+              mac.init(secretKeySpec);
+              byte[] serverCalcMac=mac.doFinal(dataBytes);
+              return MessageDigest.isEqual(receivedMac,serverCalcMac);
 
         }catch (Exception e )
         {
             return false;
         }
     }
+
+    private String bytesToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    }
+    private byte[] hexToBytes(String hex) {
+        int len = hex.length();
+        byte[] out = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            out[i / 2] = (byte) ((Character.digit(hex.charAt(i), 16) << 4)
+                    + Character.digit(hex.charAt(i+1), 16));
+        }
+        return out;
+    }
+
+
 
 
 

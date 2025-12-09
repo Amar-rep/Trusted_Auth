@@ -12,12 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("auth")
 public class RegisterController {
     private  final RegistrationService registrationService;
-    public RegisterController(RegistrationService registrationService) {
-        this.registrationService = registrationService;
-    }
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
 

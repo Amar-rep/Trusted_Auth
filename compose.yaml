@@ -1,1 +1,20 @@
+version: '3.8'
 services:
+  database:
+    # Change the image tag here:
+    image: bitnami/postgresql:latest
+    # Or bitnami/postgresql:16 (for a specific version)
+    environment:
+      # Standard settings for Bitnami image
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=password
+      - POSTGRESQL_DATABASE=ca
+    ports:
+      - "5433:5432" # Map internal 5432 to external 5433
+    volumes:
+      - 'postgresql_data:/bitnami/postgresql'
+
+# Ensure you define the volume outside the services block
+volumes:
+  postgresql_data:
+    driver: local

@@ -2,8 +2,10 @@ package com.example_amar.central_athority.service;
 
 import com.example_amar.central_athority.model.Application;
 import com.example_amar.central_athority.model.Device;
+import com.example_amar.central_athority.model.Installer;
 import com.example_amar.central_athority.repository.ApplicationRepository;
 import com.example_amar.central_athority.repository.DeviceRepository;
+import com.example_amar.central_athority.repository.InstallerRepository;
 import com.example_amar.central_athority.request.RegisterRequest;
 import com.example_amar.central_athority.response.RegisterResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class RegistrationService {
     private final ApplicationRepository applicationRepository;
+    private final InstallerRepository installerRepository;
     private final DeviceRepository deviceRepository;
     private final SecretKeyService keyService;
 
@@ -38,18 +41,24 @@ public class RegistrationService {
             }
 
 
-            boolean isValid=keyService.verifyHmac(registerRequest.getInstallerId(),registerRequest.getAppId(),registerRequest.getDeviceId(),registerRequest.getInstallerSignature());
+               boolean isValid=keyService.verifyHmac(registerRequest.getInstallerId(),registerRequest.getAppId(),registerRequest.getDeviceId(),registerRequest.getInstallerSignature());
 
              if(!isValid)
              {
                  throw new SecurityException("Invalid installer signature");
              }
+             // will fix later
+            // TODO : fix creating new objects
              UUID newRegistrationId=UUID.randomUUID();
              String newAppSecret=generateSecureRandomString();
             Device device = new Device();
+            Installer installer=installerRepository.findByInstallerUuid(UUID.fromString(registerRequest.getInstallerId())).orElseThrow(()->{
+                return  new IllegalArgumentException("Invalid installer id:"+registerRequest.getInstallerId());
+            });
             device.setRegistrationId(newRegistrationId);
             device.setDeviceId(registerRequest.getDeviceId());
             device.setApp(app);
+            device.setInstaller(installer);
             device.setAppSecret(newAppSecret);
             device.setStatus("ACTIVE");
             device.setCreatedAt(OffsetDateTime.now());
