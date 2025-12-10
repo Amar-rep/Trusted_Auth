@@ -1,7 +1,9 @@
 package com.example_amar.central_athority.request;
 
-import java.math.BigInteger;
+import lombok.Getter;
 
+import java.math.BigInteger;
+@Getter
 public class TokenRequest {
     private String appId;
     private String deviceId;
@@ -9,6 +11,6 @@ public class TokenRequest {
     private String challengeId;
     private String clientNonce;
     private String clientHash;
-    private BigInteger timestamp;
+    private long timestamp;
     private String signature;
 }

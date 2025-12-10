@@ -73,6 +73,23 @@ public class SecretKeyService {
         }
     }
 
+    public boolean tokenHmacVerification(String dataInput,String signature,String secretKey)
+    {
+        try{
+
+            byte[] keyBytes=secretKey.getBytes(StandardCharsets.UTF_8);
+            byte[] dataBytes=dataInput.getBytes(StandardCharsets.UTF_8);
+            SecretKeySpec secretKeySpec=new SecretKeySpec(keyBytes,HMAC_algo);
+            Mac mac= Mac.getInstance(HMAC_algo);
+            mac.init(secretKeySpec);
+            byte[] serverCalcMac=mac.doFinal(dataBytes);
+            return MessageDigest.isEqual(hexToBytes(signature),serverCalcMac);
+        }catch (Exception e )
+        {
+            return false;
+        }
+    }
+
     private String bytesToHex(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes) {
