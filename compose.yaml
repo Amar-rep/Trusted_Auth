@@ -1,20 +1,29 @@
 version: '3.8'
+
 services:
   database:
-    # Change the image tag here:
     image: bitnami/postgresql:latest
-    # Or bitnami/postgresql:16 (for a specific version)
+    container_name: ca-postgres
     environment:
-      # Standard settings for Bitnami image
       - POSTGRESQL_USERNAME=postgres
       - POSTGRESQL_PASSWORD=password
       - POSTGRESQL_DATABASE=ca
     ports:
-      - "5433:5432" # Map internal 5432 to external 5433
+      - "5433:5432"
     volumes:
-      - 'postgresql_data:/bitnami/postgresql'
+      - postgresql_data:/bitnami/postgresql
 
-# Ensure you define the volume outside the services block
+  springboot:
+    build: .
+    container_name: ca-springboot
+    depends_on:
+      - database
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/ca
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+
 volumes:
   postgresql_data:
-    driver: local

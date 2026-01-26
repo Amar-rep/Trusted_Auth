@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 @Builder
 public class TokenResponse {
-    private String acessToken;
-    private String tokenId ;
+    private String accessToken;
+    private String tokenId;
     private long expiresIn;
     private long issuedAt; // epoch
- }
+}

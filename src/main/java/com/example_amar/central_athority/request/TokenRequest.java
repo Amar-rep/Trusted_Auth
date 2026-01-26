@@ -1,9 +1,10 @@
 package com.example_amar.central_athority.request;
 
 import lombok.Getter;
+import lombok.Setter;
 
-import java.math.BigInteger;
 @Getter
+@Setter
 public class TokenRequest {
     private String appId;
     private String deviceId;
